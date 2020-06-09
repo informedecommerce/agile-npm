@@ -272,9 +272,9 @@ saveAs must be run within a user interaction event such as onTouchDown or onClic
 
 Syntax
 ------
-### Import `saveAs()` from agile-downloader
+### Import `saveAs()` from agile-npm
 ```js
-import { saveAs } from 'agile-downloader';
+import { saveAs } from 'agile-npm';
 ```
 
 ```js
@@ -288,7 +288,7 @@ Examples
 
 ### Saving text using `require()`
 ```js
-var AgileDownloader = require('agile-downloader');
+var AgileDownloader = require('agile-npm');
 var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
 AgileDownloader.saveAs(blob, "hello world.txt");
 ```
