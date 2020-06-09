@@ -7,19 +7,20 @@
   "_phantomChildren": {},
   "_requested": {
     "type": "git",
-    "raw": "https://github.com/informedecommerce/agile-npm.git",
-    "rawSpec": "https://github.com/informedecommerce/agile-npm.git",
+    "raw": "agile-npm@git+https://github.com/informedecommerce/agile-npm.git",
+    "name": "agile-npm",
+    "escapedName": "agile-npm",
+    "rawSpec": "git+https://github.com/informedecommerce/agile-npm.git",
     "saveSpec": "git+https://github.com/informedecommerce/agile-npm.git",
     "fetchSpec": "https://github.com/informedecommerce/agile-npm.git",
     "gitCommittish": null
   },
   "_requiredBy": [
-    "#USER",
     "/"
   ],
-  "_resolved": "git+https://github.com/informedecommerce/agile-npm.git#ca6e13cd674fc172f1a40da888adcd2b1f7c06dd",
-  "_spec": "https://github.com/informedecommerce/agile-npm.git",
-  "_where": "/home/agile/clients/7thBone/7thbonerebuild",
+  "_resolved": "git+https://github.com/informedecommerce/agile-npm.git#499b0f5c4bf89af820a50980cdb2c5145f4e471a",
+  "_spec": "agile-npm@git+https://github.com/informedecommerce/agile-npm.git",
+  "_where": "/home/agile/clients/mobileboilerplate/mobile-boilerplate",
   "author": {
     "name": "Agile Consulting",
     "email": "info@agileconsulting.info"

@@ -1,10 +1,96 @@
-AgileDownloader
+AgileNPM
 ============
 
-This plugin is originally based on the fileSaver npm package. More info AgileDownloader.js below.
+This package is built specifically for the Agile Consulting Application Boilerplate
+The package includes static variables and methods that are commonly used within applications.
+
+Installation
+------------------
+
+```bash
+# Basic Node.JS installation
+Meteor npm install agile-npm@https://github.com/informedecommerce/agile-npm.git
+```
+
+Via application package json:
+
+```bash
+# Additional typescript definitions
+"agile-npm": "git+https://github.com/informedecommerce/agile-npm.git"
+```
+
+<ul>
+   <li><a href="#states">Javascript object list of US States</a></li>
+   <li><a href="#mimes">Javascript object list of file mime types</a></li>
+   <li><a href="#blob">b64 to blob for cordova file uploading images</a></li>
+   <li><a href="#upload">Javascript object list of file mime types</a></li>
+   <li><a href="#download">Javascript object list of file mime types</a></li>
+</ul>
+
+<div id="states">
+   US States are available in an array of json objects.
+   
+   ```json
+[
+   {
+    abreviation: "AL",
+    full: "Alabama"
+}, {
+    abreviation: "AK",
+    full: "Alaska"
+}, 
+   ]
+```
+   
+   </div>
+   
+   <div id="mimes">
+   Mime Types are a json object with the file extension as the key
+```json
+{
+    "323": "text/h323",
+    "3g2": "video/3gpp2",
+    "3gp": "video/3gpp",
+   .... }
+```
+   </div>
+
+<div id="upload">
+   The upload method uploads to AWS S3 and uses settings found in settings.json
+   Examples found in the developer directory for webapp and cordova.
+   
+   Use
+  ```js
+Agile.upload(file, 'test/cordova/camera/', (data) => {
+                  console.log(data)
+                  
+                  if(data.error){
+                     this.$toast.show(data.message, 'Error', this.toast_opts.error)
+                      this.process_running = false
+                     this.upload_progress = 0
+                     return false
+                  }
+                  
+                  if(data.complete){
+                     console.warn('S3 Upload Complete')
+                     this.image = data.Location
+                     this.process_running = false
+                     this.upload_progress = 0
+                        this.$toast.show('Base64 Image Uploaded to S3', 'Sucess', this.toast_opts.success)
+                  }else{
+                     console.log(data)
+                     this.process_running = false
+                     this.upload_progress = data.progress
+                  }
+                   
+               })
+```
+</div>
+
+<div id="download">
 This was specifically adapted for including cordova functionality and within a Meteor packaged application based on the Agile Consulting boilerplate.
 
-install: Meteor npm install agile-downloader@https://github.com/skwerlzu/AgileDownloader.git
+
 
 This version defaults to the browser based FileSaver.js methods if Meteor.isCordova returns false.
 
@@ -16,8 +102,8 @@ Current version:
 Cordova usage has a callback handler to report download progress
 
 ```js
-dlTest(url = null, file_name = null, storage_location = null, callback = null){
-         AgileDownloader.saveAs(url, file_name, (response) =>{
+downloadTestMethod(url = null, file_name = null, storage_location = null, callback = null){
+         Agile.saveAs(url, file_name, (response) =>{
             console.warn('Download callback')
             console.log(response)
             this.DL_PROGRESS = response.progress //set reactive var to display or use the progress
@@ -155,30 +241,6 @@ AgileDownloader.saveAs(file);
 ```
 
 
+</div>
 
-![Tracking image](https://in.getclicky.com/212712ns.gif)
 
-  [1]: http://eligrey.com/demos/AgileDownloader.js/
-  [2]: https://github.com/eligrey/canvas-toBlob.js
-  [3]: https://bugs.chromium.org/p/chromium/issues/detail?id=375297#c107
-  [4]: https://developer.mozilla.org/en-US/docs/DOM/Blob
-  [5]: https://github.com/eligrey/Blob.js
-  [6]: https://github.com/eligrey/canvas-toBlob.js
-  [7]: https://github.com/jimmywarting/StreamSaver.js
-  [8]: https://github.com/eligrey/AgileDownloader.js/wiki/Saving-a-remote-file#using-http-header
-
-Installation
-------------------
-
-```bash
-# Basic Node.JS installation
-npm install agile-downloader --save
-bower install agile-downloader
-```
-
-Additionally, TypeScript definitions can be installed via:
-
-```bash
-# Additional typescript definitions
-npm install @types/agile-downloader --save-dev
-```
