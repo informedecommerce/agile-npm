@@ -24,6 +24,9 @@ Via application package json:
 <ul>
    <li><a href="#states">Javascript object list of US States</a></li>
    <li><a href="#mimes">Javascript object list of file mime types</a></li>
+   <li><a href="#dcolor">Dark Color Generator</a></li>
+   <li><a href="#lcolor">Light Color Generator</a></li>
+   <li><a href="#colorconv">Color Conversions</a></li>
    <li><a href="#blob">Base64 to blob for cordova file uploading images</a></li>
    <li><a href="#upload">Javascript object list of file mime types</a></li>
    <li><a href="#download">Javascript object list of file mime types</a></li>
@@ -60,6 +63,61 @@ Via application package json:
     "3gp": "video/3gpp",
    .... }
 ```
+   </div>
+   
+   <div id="dcolor">
+   <h3>Dark Color Generator - <small><a href="#top">Back to Top</a></small></h3>
+   <hr>
+   Returns a randomly generated color for use with light text
+   
+   ```js
+var dark_color = Agile.darkColorGen();
+```
+   
+   </div>
+   
+<div id="lcolor">
+   <h3>Light Color Generator - <small><a href="#top">Back to Top</a></small></h3>
+   <hr>
+   Returns a randomly generated color for use with dark text
+   
+   ```js
+var light_color = Agile.lightColorGen()
+```
+   
+   </div>
+   
+   <div id="colorconv">
+   <h3>Color Conversions - <small><a href="#top">Back to Top</a></small></h3>
+   <hr>
+   There are two options for converting colors. Hex to RGB or RGB to Hex 
+   Pass strings
+   Return Strings
+   
+   ```js
+var rgb_color = Agile.hexToRGB('#ffffff')
+var hex_color = Agile.rgbToHEX('255,255,255')
+```
+   
+   </div>
+   
+   <div id="states">
+   <h3>US States - <small><a href="#top">Back to Top</a></small></h3>
+   <hr>
+   US States are available in an array of json objects.
+   
+   ```json
+[
+   {
+    abreviation: "AL",
+    full: "Alabama"
+}, {
+    abreviation: "AK",
+    full: "Alaska"
+}, 
+   ]
+```
+   
    </div>
    
    <div id="blob">
