@@ -252,19 +252,19 @@ Feature detection is possible:
 
 ```js
 try {
-    var isAgileDownloaderSupported = !!new Blob;
+    var isAgileSupported = !!new Blob;
 } catch (e) {}
 ```
 
 ### IE < 10
 
 It is possible to save text files in IE < 10 without Flash-based polyfills.
-See [ChenWenBrian and koffsyrup's `saveTextAs()`](https://github.com/koffsyrup/AgileDownloader.js#examples) for more details.
+See [ChenWenBrian and koffsyrup's `saveTextAs()`](https://github.com/koffsyrup/Agile.js#examples) for more details.
 
 ### Safari 6.1+
 
 Blobs may be opened instead of saved sometimes—you may have to direct your Safari users to manually
-press <kbd>⌘</kbd>+<kbd>S</kbd> to save the file after it is opened. Using the `application/octet-stream` MIME type to force downloads [can cause issues in Safari](https://github.com/eligrey/AgileDownloader.js/issues/12#issuecomment-47247096).
+press <kbd>⌘</kbd>+<kbd>S</kbd> to save the file after it is opened. Using the `application/octet-stream` MIME type to force downloads [can cause issues in Safari](https://github.com/eligrey/Agile.js/issues/12#issuecomment-47247096).
 
 ### iOS
 
@@ -278,32 +278,32 @@ import { saveAs } from 'agile-npm';
 ```
 
 ```js
-AgileDownloader saveAs(Blob/File/Url, optional DOMString filename, optional Object { autoBom })
+Agile saveAs(Blob/File/Url, optional DOMString filename, optional Object { autoBom })
 ```
 
-Pass `{ autoBom: true }` if you want AgileDownloader.js to automatically provide Unicode text encoding hints (see: [byte order mark](https://en.wikipedia.org/wiki/Byte_order_mark)). Note that this is only done if your blob type has `charset=utf-8` set.
+Pass `{ autoBom: true }` if you want Agile.js to automatically provide Unicode text encoding hints (see: [byte order mark](https://en.wikipedia.org/wiki/Byte_order_mark)). Note that this is only done if your blob type has `charset=utf-8` set.
 
 Examples
 --------
 
 ### Saving text using `require()`
 ```js
-var AgileDownloader = require('agile-npm');
+var Agile = require('agile-npm');
 var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
-AgileDownloader.saveAs(blob, "hello world.txt");
+Agile.saveAs(blob, "hello world.txt");
 ```
 
 ### Saving text
 
 ```js
 var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
-AgileDownloader.saveAs(blob, "hello world.txt");
+Agile.saveAs(blob, "hello world.txt");
 ```
 
 ### Saving URLs
 
 ```js
-AgileDownloader.saveAs("https://httpbin.org/image", "image.jpg");
+Agile.saveAs("https://httpbin.org/image", "image.jpg");
 ```
 Using URLs within the same origin will just use `a[download]`.
 Otherwise, it will first check if it supports cors header with a synchronous head request.
@@ -335,7 +335,7 @@ If you still want to change the name, then you can change it in the 2nd argument
 // Note: Ie and Edge don't support the new File constructor,
 // so it's better to construct blobs and use saveAs(blob, filename)
 var file = new File(["Hello, world!"], "hello world.txt", {type: "text/plain;charset=utf-8"});
-AgileDownloader.saveAs(file);
+Agile.saveAs(file);
 ```
 
 
