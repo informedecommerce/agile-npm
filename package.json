@@ -1,0 +1,65 @@
+{
+  "_from": "git+https://github.com/informedecommerce/agile-npm.git",
+  "_id": "agile-npm@1.0.0",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/agile-npm",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "git",
+    "raw": "https://github.com/informedecommerce/agile-npm.git",
+    "rawSpec": "https://github.com/informedecommerce/agile-npm.git",
+    "saveSpec": "git+https://github.com/informedecommerce/agile-npm.git",
+    "fetchSpec": "https://github.com/informedecommerce/agile-npm.git",
+    "gitCommittish": null
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "git+https://github.com/informedecommerce/agile-npm.git#ca6e13cd674fc172f1a40da888adcd2b1f7c06dd",
+  "_spec": "https://github.com/informedecommerce/agile-npm.git",
+  "_where": "/home/agile/clients/7thBone/7thbonerebuild",
+  "author": {
+    "name": "Agile Consulting",
+    "email": "info@agileconsulting.info"
+  },
+  "bugs": {
+    "url": "https://github.com/skwerlzu/AgileNPM/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "An HTML5 saveAs() AgileNPM implementation",
+  "devDependencies": {
+    "@babel/cli": "^7.1.0",
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-transform-modules-umd": "^7.1.0",
+    "babel-preset-minify": "^0.4.3"
+  },
+  "files": [
+    "dist/AgileNPM.js",
+    "dist/AgileNPM.min.js",
+    "src/AgileNPM.js"
+  ],
+  "homepage": "https://github.com/informedecommerce/agile-npm.git#readme",
+  "keywords": [
+    "AgileNPM",
+    "saveas",
+    "blob"
+  ],
+  "license": "PRIVATE",
+  "main": "dist/AgileNPM.min.js",
+  "name": "agile-npm",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/informedecommerce/agile-npm.git"
+  },
+  "scripts": {
+    "build": "npm run build:development && npm run build:production",
+    "build:development": "babel -o dist/AgileNPM.js --plugins @babel/plugin-transform-modules-umd src/AgileNPM.js",
+    "build:production": "babel -o dist/AgileNPM.min.js -s --plugins @babel/plugin-transform-modules-umd --presets minify src/AgileNPM.js",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "version": "1.0.0"
+}

@@ -1,0 +1,21 @@
+{
+  "name": "agile-npm",
+  "main": "dist/AgileNPM.min.js",
+  "version": "2.0.0-rc.3",
+  "homepage": "https://github.com/skwerlzu/AgileNPM",
+  "authors": [
+    "Eli Grey <me@eligrey.com>"
+  ],
+  "description": "An HTML5 saveAs() AgileNPM implementation",
+  "keywords": [
+    "AgileNPM",
+    "saveas",
+    "blob"
+  ],
+  "license": "MIT",
+  "ignore": [
+      "*",
+      "!dist/*",
+      "!LICENSE.md"
+  ]
+}
