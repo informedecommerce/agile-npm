@@ -1,8 +1,10 @@
 AgileNPM
 ============
 
+<div id="top">
 This package is built specifically for the Agile Consulting Application Boilerplate
 The package includes static variables and methods that are commonly used within applications.
+</div>
 
 Installation
 ------------------
@@ -22,12 +24,14 @@ Via application package json:
 <ul>
    <li><a href="#states">Javascript object list of US States</a></li>
    <li><a href="#mimes">Javascript object list of file mime types</a></li>
-   <li><a href="#blob">b64 to blob for cordova file uploading images</a></li>
+   <li><a href="#blob">Base64 to blob for cordova file uploading images</a></li>
    <li><a href="#upload">Javascript object list of file mime types</a></li>
    <li><a href="#download">Javascript object list of file mime types</a></li>
 </ul>
 
 <div id="states">
+   <h3>US States - <small><a href="#top">Back to Top</a></small></h3>
+   <hr>
    US States are available in an array of json objects.
    
    ```json
@@ -45,7 +49,10 @@ Via application package json:
    </div>
    
    <div id="mimes">
+   <h3>Mime Types - <small><a href="#top">Back to Top</a></small></h3>
+   <hr>
    Mime Types are a json object with the file extension as the key
+   
 ```json
 {
     "323": "text/h323",
@@ -54,8 +61,28 @@ Via application package json:
    .... }
 ```
    </div>
+   
+   <div id="blob">
+    <h3>Base64 to Blob - <small><a href="#top">Back to Top</a></small></h3>
+   <hr>
+   Base 64 to Blob conversion for handling base64 item conversion to a file object. 
+   Examples in developer/cordova.vue
+   
+   Usage 
+   
+   ```js
+Agile.b64toBlob(image_data, 'cordova_camera_base64.jpg', (file) => {
+               console.log('Blob Returned')
+               console.log(file)
+            //Use Agile.upload here to upload returned file object
+})
+```
+   
+   </div>
 
 <div id="upload">
+    <h3>S3 Uploading - <small><a href="#top">Back to Top</a></small></h3>
+   <hr>
    The upload method uploads to AWS S3 and uses settings found in settings.json
    Examples found in the developer directory for webapp and cordova.
    
@@ -88,7 +115,10 @@ Agile.upload(file, 'test/cordova/camera/', (data) => {
 </div>
 
 <div id="download">
+    <h3>Downloading - <small><a href="#top">Back to Top</a></small></h3>
+   <hr>
 This was specifically adapted for including cordova functionality and within a Meteor packaged application based on the Agile Consulting boilerplate.
+   This is an Http downloader with local file handling for cordova applications
 
 
 
