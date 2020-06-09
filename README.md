@@ -21,6 +21,16 @@ Via application package json:
 "agile-npm": "git+https://github.com/informedecommerce/agile-npm.git"
 ```
 
+Usage
+Using on an individual .vue
+import Agile from 'agile-npm';
+Use: Agile....
+
+Using globally via client/main.js
+import Agile from 'agile-npm';
+Vue.prototype.Agile = Agile
+Use: this.Agile.....
+
 <ul>
    <li><a href="#states">Javascript object list of US States</a></li>
    <li><a href="#mimes">Javascript object list of file mime types</a></li>
