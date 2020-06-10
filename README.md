@@ -11,7 +11,7 @@ Installation
 
 ```bash
 # Basic Node.JS installation
-Meteor npm install agile-npm@https://github.com/informedecommerce/agile-npm.git
+meteor npm install agile-npm@https://github.com/informedecommerce/agile-npm.git
 ```
 
 Via application package json:
