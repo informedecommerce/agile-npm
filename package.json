@@ -31,6 +31,9 @@
   "bundleDependencies": false,
   "deprecated": false,
   "description": "An HTML5 saveAs() AgileNPM implementation",
+   "dependencies": {
+   "aws-sdk": "^2.706.0"
+   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",
     "@babel/core": "^7.1.0",
