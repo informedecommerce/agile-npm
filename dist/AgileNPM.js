@@ -19,13 +19,13 @@ var _global = typeof window === 'object' && window.window === window ?
 
 var ac = {}
 
-console.log('AgileNPM')
-console.log('isCordova: ' + Meteor.isCordova)
+//console.log('AgileNPM')
+//console.log('isCordova: ' + Meteor.isCordova)
 
 
 ac.test = () => {
-   console.log(Meteor.isCordova)
-   console.log(Vue)
+   //console.log(Meteor.isCordova)
+   //console.log(Vue)
 }
 
 
@@ -80,7 +80,7 @@ ac.rgbToHex = (rgb) => {
 ac.b64toBlob = (b64_data, file_name, slice_size, cb = null) => {
         //console.log('b64toblob start')
         if (Object.prototype.toString.call(slice_size) == '[object Function]') {
-            console.log('slice size is function')
+            //console.log('slice size is function')
             cb = slice_size;
             slice_size = 512
         }
@@ -136,14 +136,14 @@ ac.b64toBlob = (b64_data, file_name, slice_size, cb = null) => {
             lastModified: new Date()
         });
         blob.name = file_name
-        console.log('blob', blob)
+        //console.log('blob', blob)
 
         if (cb != null) {
-            console.log('Callback is a function')
+            //console.log('Callback is a function')
             cb(blob)
         }
 
-        console.log('end b64toblob')
+        //console.log('end b64toblob')
         return blob;
     }
 
@@ -159,26 +159,53 @@ This uses the AWS settings within the settings.json file
     "amazon_bucket" : "agiledevtesting",
     "amazon_region" : "us-east-1"
   },
+  "private":{
+  	"agile_npm" : {
+		"size_limit" : 5 //size limit in mb
+	}
+  }
+
 
 BEGIN S3 UPLOAD --------------------------------------------------------------------
 */
-ac.upload = (file, path = '', cb = null) => {
+ac.upload = (file, path = '', settings = null, cb = null) => {
 
+	
+	
     var S3 = require('aws-sdk/clients/s3');
     var AWS = require('aws-sdk/global');
 
     //if path is the callback set cb to proper method
     //console.log('S# Global Called')
     //console.log(file)
-    // console.log(path)
-    // console.log(cb)
+    // //console.log(path)
+    // //console.log(cb)
 
     if (Object.prototype.toString.call(path) == '[object Function]') {
         cb = path;
         path = ''
     }
+	
+	
+	 if (Object.prototype.toString.call(settings) == '[object Function]') {
+        cb = settings;
+        try{
+				settings = Meteor.settings.public.agile_npm
+			}catch(err){
+				console.error('agile-npm',err)
+			}
+    }else{
+		if(!settings){
+			try{
+				settings = Meteor.settings.public.agile_npm
+			}catch(err){
+				console.error('agile-npm',err)
+			}
+			
+		}
+	}
 
-
+	
     //cb is called on http updates
     if (!file) {
         var message = 'S3 upload requires a file(s) to upload'
@@ -196,6 +223,25 @@ ac.upload = (file, path = '', cb = null) => {
 
     }
 
+	//run through settings
+	if(settings){
+		if(settings.size_limit){
+			//check file size against set limit
+			//console.log('agile-npm: file_size', file, settings)
+			let f_size = file.size / (1024*1024)
+			if(f_size > settings.size_limit ){ //settings.size_limit
+				 if (cb) {
+					cb({
+						name: file.name,
+						error: true,
+						message: file.name + ' size of '+f_size.toFixed(1)+ 'mb is larger than '+settings.size_limit+'mb'
+					})
+					return false
+				}
+			}
+		}
+	}
+	
 	var content_type = null
 	
     if (!file.name) {
@@ -271,7 +317,7 @@ ac.upload = (file, path = '', cb = null) => {
                 message: err
             })
         } else {
-            console.log(data)
+            //console.log(data)
             data.progress = 100
             data.file_type = file_type
             data.ext = ext
@@ -279,6 +325,7 @@ ac.upload = (file, path = '', cb = null) => {
 			data.file_size = file_size
             data.name = file.name
             data.complete = true
+			data.settings = settings
             cb(data)
         }
     }).on('httpUploadProgress', (evt) => {
@@ -359,14 +406,14 @@ function click(node) {
 
 
 ac.saveAs = function() {
-    console.log('agile-npm Initiating....')
+    //console.log('agile-npm Initiating....')
     return false
 };
 
 if (Meteor.isCordova) {
 
-    console.log('agile-npm: Device Ready')
-    console.log(cordova.file);
+    //console.log('agile-npm: Device Ready')
+    //console.log(cordova.file);
 
 
     //If cordova switch to native file transfering and local storage
@@ -419,13 +466,13 @@ if (Meteor.isCordova) {
         resolveLocalFileSystemURL(
             storage_location,
             function(fs) {
-                console.log('file system open: ' + fs.name);
+                //console.log('file system open: ' + fs.name);
                 fs.getFile(file_name, {
                     create: true,
                     exclusive: false
                 }, function(fileEntry) {
 
-                    console.log('fileEntry is file? ' + fileEntry.isFile.toString());
+                    //console.log('fileEntry is file? ' + fileEntry.isFile.toString());
                     var oReq = new XMLHttpRequest();
                     // Make sure you add the domain name to the Content-Security-Policy <meta> element.
                     oReq.open("GET", url, true);
@@ -434,16 +481,16 @@ if (Meteor.isCordova) {
 
                     oReq.addEventListener('readystatechange', function(e) {
                         if (oReq.readyState == 2 && oReq.status == 200) {
-                            console.log('Download is being started')
+                            //console.log('Download is being started')
                         } else if (oReq.readyState == 3) {
-                            console.log('Download is in progress')
+                            //console.log('Download is in progress')
                         } else if (oReq.readyState == 4) {
-                            console.log('Downloading has finished')
+                            //console.log('Downloading has finished')
 
                             self.DL_OBJECT = oReq.response;
 
 
-                            console.log(oReq)
+                            //console.log(oReq)
 
                             // Set href as a local object URL
                             self.DL_PATH = self.DL_OBJECT;
@@ -459,7 +506,7 @@ if (Meteor.isCordova) {
                                         fileWriter.write(blob);
 
                                         var mimeType = fileEntry.file.type
-                                        console.log('mimetype: ' + mimeType)
+                                        //console.log('mimetype: ' + mimeType)
                                         fileWriter.onwriteend = function() {
                                             var url = fileEntry.toURL();
 
@@ -514,11 +561,11 @@ if (Meteor.isCordova) {
                                  var reader = new FileReader();
                                  reader.addEventListener("loadend", function(e) {
                                     // reader.result contains the contents of blob as text
-                                    console.log('File Downloaded')
-                                    console.log(reader)
+                                    //console.log('File Downloaded')
+                                    //console.log(reader)
                                  });
                                 
-                                 console.log(reader.readAsText(blob));
+                                 //console.log(reader.readAsText(blob));
                                  */
                             } else console.error('we didnt get an XHR response!');
 
