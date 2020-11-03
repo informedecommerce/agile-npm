@@ -1,957 +1,914 @@
-//import { Meteor } from 'meteor/meteor'
+(function (global, factory) {
+  if (typeof define === "function" && define.amd) {
+    define([], factory);
+  } else if (typeof exports !== "undefined") {
+    factory();
+  } else {
+    var mod = {
+      exports: {}
+    };
+    factory();
+    global.AgileNPM = mod.exports;
+  }
+})(this, function () {
+  "use strict";
 
-/*
- * AgileNPM.js
- *
- * By Agile Consulting, http://agileconsulting.info
- *
- * License : https://github.com/skwerlzu/AgileNPM/blob/master/LICENSE.md (MIT)
- * source  : https://github.com/skwerlzu/AgileNPM
- */
+  //import { Meteor } from 'meteor/meteor'
 
-// The one and only way of getting global scope in all environments
-// https://stackoverflow.com/q/3277182/1008999
-var _global = typeof window === 'object' && window.window === window ?
-    window : typeof self === 'object' && self.self === self ?
-    self : typeof global === 'object' && global.global === global ?
-    global :
-    this
+  /*
+   * AgileNPM.js
+   *
+   * By Agile Consulting, http://agileconsulting.info
+   *
+   * License : https://github.com/skwerlzu/AgileNPM/blob/master/LICENSE.md (MIT)
+   * source  : https://github.com/skwerlzu/AgileNPM
+   */
+  // The one and only way of getting global scope in all environments
+  // https://stackoverflow.com/q/3277182/1008999
+  var _global = typeof window === 'object' && window.window === window ? window : typeof self === 'object' && self.self === self ? self : typeof global === 'object' && global.global === global ? global : void 0;
 
-var ac = {}
+  var ac = {}; //console.log('AgileNPM')
+  //console.log('isCordova: ' + Meteor.isCordova)
 
-//console.log('AgileNPM')
-//console.log('isCordova: ' + Meteor.isCordova)
+  ac.test = () => {//console.log(Meteor.isCordova)
+    //console.log(Vue)
+  };
 
-
-ac.test = () => {
-   //console.log(Meteor.isCordova)
-   //console.log(Vue)
-}
-
-
-ac.darkColorGen = () => {
+  ac.darkColorGen = () => {
     var letters = '012345678'.split('');
     var color = '#';
+
     for (var i = 0; i < 6; i++) {
-        color += letters[Math.round(Math.random() * 8)];
+      color += letters[Math.round(Math.random() * 8)];
     }
+
     return color;
-}
+  };
 
-ac.lightColorGen = () => {
+  ac.lightColorGen = () => {
     var letters = 'BCDEF'.split('');
-                var color = '#';
-                for (var i = 0; i < 6; i++ ) {
-                    color += letters[Math.floor(Math.random() * letters.length)];
-                }
-                return color;
-}
+    var color = '#';
 
-ac.hexToRGB = (hex) => {
-   if(hex.length != 6){
-        throw "Only six-digit hex colors are allowed.";
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * letters.length)];
+    }
+
+    return color;
+  };
+
+  ac.hexToRGB = hex => {
+    if (hex.length != 6) {
+      throw "Only six-digit hex colors are allowed.";
     }
 
     var aRgbHex = hex.match(/.{1,2}/g);
-    var aRgb = parseInt(aRgbHex[0], 16) + ',' + parseInt(aRgbHex[1], 16) + ',' + parseInt(aRgbHex[2], 16)
+    var aRgb = parseInt(aRgbHex[0], 16) + ',' + parseInt(aRgbHex[1], 16) + ',' + parseInt(aRgbHex[2], 16);
     return aRgb;
-}
+  };
 
-ac.rgbToHex = (rgb) => {
+  ac.rgbToHex = rgb => {
     // Choose correct separator
-  let sep = rgb.indexOf(",") > -1 ? "," : " ";
-  // Turn "rgb(r,g,b)" into [r,g,b]
-  rgb = rgb.substr(4).split(")")[0].split(sep);
+    let sep = rgb.indexOf(",") > -1 ? "," : " "; // Turn "rgb(r,g,b)" into [r,g,b]
 
-  let r = (+rgb[0]).toString(16),
-      g = (+rgb[1]).toString(16),
-      b = (+rgb[2]).toString(16);
+    rgb = rgb.substr(4).split(")")[0].split(sep);
+    let r = (+rgb[0]).toString(16),
+        g = (+rgb[1]).toString(16),
+        b = (+rgb[2]).toString(16);
+    if (r.length == 1) r = "0" + r;
+    if (g.length == 1) g = "0" + g;
+    if (b.length == 1) b = "0" + b;
+    return "#" + r + g + b;
+  };
 
-  if (r.length == 1)
-    r = "0" + r;
-  if (g.length == 1)
-    g = "0" + g;
-  if (b.length == 1)
-    b = "0" + b;
-
-  return "#" + r + g + b;
-}
-
-ac.b64toBlob = (b64_data, file_name, slice_size, cb = null) => {
-        //console.log('b64toblob start')
-        if (Object.prototype.toString.call(slice_size) == '[object Function]') {
-            //console.log('slice size is function')
-            cb = slice_size;
-            slice_size = 512
-        }
-        slice_size = slice_size || 512;
-
-        if (!file_name) {
-            //file_name should include extension Example: test.pdf
-            var message = 'Base64 conversion requires a file name to upload'
-            console.error('Base64 conversion error', message)
-            if (cb) {
-                cb({
-                    error: true,
-                    message: message
-                })
-                return false
-            }
-        } else {
-            var ext = file_name.split(".")
-            ext = ext.pop()
-            var content_type = ac.mime_types[ext]
-            if (!content_type) {
-                var message = 'Unrecognized File Type'
-                console.error('S3 upload error', message)
-                if (cb) {
-                    cb({
-                        error: true,
-                        message: message
-                    })
-                    return false
-                }
-            }
-            var file_type = content_type.split("/")[0]
-        }
-
-        var byteCharacters = atob(b64_data);
-        var byte_arrays = [];
-
-        for (var offset = 0; offset < byteCharacters.length; offset += slice_size) {
-            var slice = byteCharacters.slice(offset, offset + slice_size);
-
-            var byte_numbers = new Array(slice.length);
-            for (var i = 0; i < slice.length; i++) {
-                byte_numbers[i] = slice.charCodeAt(i);
-            }
-
-            var byte_array = new Uint8Array(byte_numbers);
-
-            byte_arrays.push(byte_array);
-        }
-
-        var blob = new Blob(byte_arrays, {
-            type: content_type,
-            lastModified: new Date()
-        });
-        blob.name = file_name
-        //console.log('blob', blob)
-
-        if (cb != null) {
-            //console.log('Callback is a function')
-            cb(blob)
-        }
-
-        //console.log('end b64toblob')
-        return blob;
+  ac.b64toBlob = (b64_data, file_name, slice_size, cb = null) => {
+    //console.log('b64toblob start')
+    if (Object.prototype.toString.call(slice_size) == '[object Function]') {
+      //console.log('slice size is function')
+      cb = slice_size;
+      slice_size = 512;
     }
 
-/*
-Upload function is built to work specifically with AWS S3
-See WebApp or Cordova examples in the developer pages
+    slice_size = slice_size || 512;
+
+    if (!file_name) {
+      //file_name should include extension Example: test.pdf
+      var message = 'Base64 conversion requires a file name to upload';
+      console.error('Base64 conversion error', message);
+
+      if (cb) {
+        cb({
+          error: true,
+          message: message
+        });
+        return false;
+      }
+    } else {
+      var ext = file_name.split(".");
+      ext = ext.pop().toLowerCase();
+      var content_type = ac.mime_types[ext];
+
+      if (Meteor.isDevelopment) {
+        console.log('agile-npm: uploader file extension', ext, content_type);
+      }
+
+      if (!content_type) {
+        var message = 'Unrecognized File Type';
+        console.error('S3 upload error', message);
+
+        if (cb) {
+          cb({
+            error: true,
+            message: message
+          });
+          return false;
+        }
+      }
+
+      var file_type = content_type.split("/")[0];
+    }
+
+    var byteCharacters = atob(b64_data);
+    var byte_arrays = [];
+
+    for (var offset = 0; offset < byteCharacters.length; offset += slice_size) {
+      var slice = byteCharacters.slice(offset, offset + slice_size);
+      var byte_numbers = new Array(slice.length);
+
+      for (var i = 0; i < slice.length; i++) {
+        byte_numbers[i] = slice.charCodeAt(i);
+      }
+
+      var byte_array = new Uint8Array(byte_numbers);
+      byte_arrays.push(byte_array);
+    }
+
+    var blob = new Blob(byte_arrays, {
+      type: content_type,
+      lastModified: new Date()
+    });
+    blob.name = file_name; //console.log('blob', blob)
+
+    if (cb != null) {
+      //console.log('Callback is a function')
+      cb(blob);
+    } //console.log('end b64toblob')
 
 
-This uses the AWS settings within the settings.json file
+    return blob;
+  };
+  /*
+  Upload function is built to work specifically with AWS S3
+  See WebApp or Cordova examples in the developer pages
+  
+  
+  This uses the AWS settings within the settings.json file
+  
+  "public" : {
+       "amazon_identity" : "us-east-1:9e2c7006-07aa-4bf2-82b7-8d8d4b77191b",
+      "amazon_bucket" : "agiledevtesting",
+      "amazon_region" : "us-east-1"
+    },
+    "private":{
+    	"agile_npm" : {
+  		"size_limit" : 5 //size limit in mb
+  	}
+    }
+  
+  
+  BEGIN S3 UPLOAD --------------------------------------------------------------------
+  */
 
-"public" : {
-     "amazon_identity" : "us-east-1:9e2c7006-07aa-4bf2-82b7-8d8d4b77191b",
-    "amazon_bucket" : "agiledevtesting",
-    "amazon_region" : "us-east-1"
-  },
-  "private":{
-  	"agile_npm" : {
-		"size_limit" : 5 //size limit in mb
-	}
-  }
 
-
-BEGIN S3 UPLOAD --------------------------------------------------------------------
-*/
-ac.upload = (file, path = '', settings = null, cb = null) => {
-
-	
-	
+  ac.upload = (file, path = '', settings = null, cb = null) => {
     var S3 = require('aws-sdk/clients/s3');
-    var AWS = require('aws-sdk/global');
 
-    //if path is the callback set cb to proper method
+    var AWS = require('aws-sdk/global'); //if path is the callback set cb to proper method
     //console.log('S# Global Called')
     //console.log(file)
     // //console.log(path)
     // //console.log(cb)
 
+
     if (Object.prototype.toString.call(path) == '[object Function]') {
-        cb = path;
-        path = ''
-    }
-	
-	
-	 if (Object.prototype.toString.call(settings) == '[object Function]') {
-        cb = settings;
-        try{
-				settings = Meteor.settings.public.agile_npm
-			}catch(err){
-				console.error('agile-npm',err)
-			}
-    }else{
-		if(!settings){
-			try{
-				settings = Meteor.settings.public.agile_npm
-			}catch(err){
-				console.error('agile-npm',err)
-			}
-			
-		}
-	}
-
-	
-    //cb is called on http updates
-    if (!file) {
-        var message = 'S3 upload requires a file(s) to upload'
-        console.error('S3 upload error', message)
-
-        if (cb) {
-            cb({
-                name: file.name,
-                error: true,
-                message: message
-            })
-            return false
-        }
-
-
+      cb = path;
+      path = '';
     }
 
-	//run through settings
-	if(settings){
-		if(settings.size_limit){
-			//check file size against set limit
-			//console.log('agile-npm: file_size', file, settings)
-			let f_size = file.size / (1024*1024)
-			if(f_size > settings.size_limit ){ //settings.size_limit
-				 if (cb) {
-					cb({
-						name: file.name,
-						error: true,
-						message: file.name + ' size of '+f_size.toFixed(1)+ 'mb is larger than '+settings.size_limit+'mb'
-					})
-					return false
-				}
-			}
-		}
-	}
-	
-	var content_type = null
-	
-    if (!file.name) {
-        //file_name should include extension Example: test.pdf
-        var message = 'S3 upload requires a file name to upload'
-        console.error('S3 upload error', message)
-        if (cb) {
-            cb({
-                name: file.name,
-                error: true,
-                message: message
-            })
-            return false
-        }
+    if (Object.prototype.toString.call(settings) == '[object Function]') {
+      cb = settings;
+
+      try {
+        settings = Meteor.settings.public.agile_npm;
+      } catch (err) {
+        console.error('agile-npm', err);
+      }
     } else {
-        var ext = file.name.split(".")
-        ext = ext.pop()
-        content_type = ac.mime_types[ext]
-        if (!content_type) {
-            var message = 'Unrecognized File Type'
-            console.error('S3 upload error', message)
-            if (cb) {
-                cb({
-                    name: file.name,
-                    error: true,
-                    message: message
-                })
-                return false
-            }
+      if (!settings) {
+        try {
+          settings = Meteor.settings.public.agile_npm;
+        } catch (err) {
+          console.error('agile-npm', err);
         }
-        var file_type = content_type.split("/")[0]
+      }
+    } //cb is called on http updates
+
+
+    if (!file) {
+      var message = 'S3 upload requires a file(s) to upload';
+      console.error('S3 upload error', message);
+
+      if (cb) {
+        cb({
+          name: file.name,
+          error: true,
+          message: message
+        });
+        return false;
+      }
+    } //run through settings
+
+
+    if (settings) {
+      if (settings.size_limit) {
+        //check file size against set limit
+        //console.log('agile-npm: file_size', file, settings)
+        let f_size = file.size / (1024 * 1024);
+
+        if (f_size > settings.size_limit) {
+          //settings.size_limit
+          if (cb) {
+            cb({
+              name: file.name,
+              error: true,
+              message: file.name + ' size of ' + f_size.toFixed(1) + 'mb is larger than ' + settings.size_limit + 'mb'
+            });
+            return false;
+          }
+        }
+      }
     }
 
+    var content_type = null;
 
+    if (!file.name) {
+      //file_name should include extension Example: test.pdf
+      var message = 'S3 upload requires a file name to upload';
+      console.error('S3 upload error', message);
 
-    //set the proper file type data
+      if (cb) {
+        cb({
+          name: file.name,
+          error: true,
+          message: message
+        });
+        return false;
+      }
+    } else {
+      var ext = file.name.split(".");
+      ext = ext.pop().toLowerCase();
+      content_type = ac.mime_types[ext];
+
+      if (Meteor.isDevelopment) {
+        console.log('agile-npm: uploader file extension', ext, content_type);
+      }
+
+      if (!content_type) {
+        var message = 'Unrecognized File Type';
+        console.error('S3 upload error', message);
+
+        if (cb) {
+          cb({
+            name: file.name,
+            error: true,
+            message: message
+          });
+          return false;
+        }
+      }
+
+      var file_type = content_type.split("/")[0];
+    } //set the proper file type data
+
 
     var bucket_name = Meteor.settings.public.amazon_bucket;
-
     var bucketRegion = Meteor.settings.public.amazon_region;
-
     AWS.config.update({
-        region: bucketRegion,
-        credentials: new AWS.CognitoIdentityCredentials({
-            IdentityPoolId: Meteor.settings.public.amazon_identity
-        })
+      region: bucketRegion,
+      credentials: new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: Meteor.settings.public.amazon_identity
+      })
     });
-
     var s3 = new AWS.S3({
-        apiVersion: '2006-03-01',
-        params: {
-            Bucket: bucket_name
-        }
+      apiVersion: '2006-03-01',
+      params: {
+        Bucket: bucket_name
+      }
     });
-
-
-	
-	var file_size = 0;
+    var file_size = 0;
     s3.upload({
-        Key: path + file.name,
-        Body: file,
-        unique_name: false,
-        ContentType: content_type,
-        ACL: 'public-read'
+      Key: path + file.name,
+      Body: file,
+      unique_name: false,
+      ContentType: content_type,
+      ACL: 'public-read'
     }, {
-        partSize: 10 * 1024 * 1024,
-        queueSize: 1
+      partSize: 10 * 1024 * 1024,
+      queueSize: 1
     }, (err, data) => {
-        if (err) {
-            console.error('S3 Upload error', err)
-            cb({
-                error: true,
-                message: err
-            })
-        } else {
-            //console.log(data)
-            data.progress = 100
-            data.file_type = file_type
-            data.ext = ext
-			data.mime_type = content_type
-			data.file_size = file_size
-            data.name = file.name
-            data.complete = true
-			data.settings = settings
-            cb(data)
-        }
-    }).on('httpUploadProgress', (evt) => {
-		file_size = evt.loaded
-        var return_data = {
-            name: file.name,
-            event: evt,
-            progress: evt.loaded / evt.total * 100,
-			file_size: evt.loaded
-        }
-        cb(return_data)
-
+      if (err) {
+        console.error('S3 Upload error', err);
+        cb({
+          error: true,
+          message: err
+        });
+      } else {
+        //console.log(data)
+        data.progress = 100;
+        data.file_type = file_type;
+        data.ext = ext;
+        data.mime_type = content_type;
+        data.file_size = file_size;
+        data.name = file.name;
+        data.complete = true;
+        data.settings = settings;
+        cb(data);
+      }
+    }).on('httpUploadProgress', evt => {
+      file_size = evt.loaded;
+      var return_data = {
+        name: file.name,
+        event: evt,
+        progress: evt.loaded / evt.total * 100,
+        file_size: evt.loaded
+      };
+      cb(return_data);
     });
-}
-//End Upload
+  }; //End Upload
 
-/*
-Download methods 'saveAs'
-BEGIN DOWNLOAD SAVEAS -----------------------------------------------------------------------------
-*/
+  /*
+  Download methods 'saveAs'
+  BEGIN DOWNLOAD SAVEAS -----------------------------------------------------------------------------
+  */
 
-function bom(blob, opts) {
+
+  function bom(blob, opts) {
     if (typeof opts === 'undefined') opts = {
-        autoBom: false
-    }
-    else if (typeof opts !== 'object') {
-        console.warn('Deprecated: Expected third argument to be a object')
-        opts = {
-            autoBom: !opts
-        }
-    }
-
-    // prepend BOM for UTF-8 XML and text/* types (including HTML)
+      autoBom: false
+    };else if (typeof opts !== 'object') {
+      console.warn('Deprecated: Expected third argument to be a object');
+      opts = {
+        autoBom: !opts
+      };
+    } // prepend BOM for UTF-8 XML and text/* types (including HTML)
     // note: your browser will automatically convert UTF-16 U+FEFF to EF BB BF
+
     if (opts.autoBom && /^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type)) {
-        return new Blob([String.fromCharCode(0xFEFF), blob], {
-            type: blob.type
-        })
+      return new Blob([String.fromCharCode(0xFEFF), blob], {
+        type: blob.type
+      });
     }
-    return blob
-}
 
-function download(url, name, opts) {
-    var xhr = new XMLHttpRequest()
-    xhr.open('GET', url)
-    xhr.responseType = 'blob'
-    xhr.onload = function() {
-        ac.saveAs(xhr.response, name, opts)
-    }
-    xhr.onerror = function() {
-        console.error('could not download file')
-    }
-    xhr.send()
-}
+    return blob;
+  }
 
-function corsEnabled(url) {
-    var xhr = new XMLHttpRequest()
-    // use sync to avoid popup blocker
-    xhr.open('HEAD', url, false)
+  function download(url, name, opts) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+
+    xhr.onload = function () {
+      ac.saveAs(xhr.response, name, opts);
+    };
+
+    xhr.onerror = function () {
+      console.error('could not download file');
+    };
+
+    xhr.send();
+  }
+
+  function corsEnabled(url) {
+    var xhr = new XMLHttpRequest(); // use sync to avoid popup blocker
+
+    xhr.open('HEAD', url, false);
+
     try {
-        xhr.send()
+      xhr.send();
     } catch (e) {}
-    return xhr.status >= 200 && xhr.status <= 299
-}
 
-// `a.click()` doesn't work for all browsers (#465)
-function click(node) {
+    return xhr.status >= 200 && xhr.status <= 299;
+  } // `a.click()` doesn't work for all browsers (#465)
+
+
+  function click(node) {
     try {
-        node.dispatchEvent(new MouseEvent('click'))
+      node.dispatchEvent(new MouseEvent('click'));
     } catch (e) {
-        var evt = document.createEvent('MouseEvents')
-        evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80,
-            20, false, false, false, false, 0, null)
-        node.dispatchEvent(evt)
+      var evt = document.createEvent('MouseEvents');
+      evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80, 20, false, false, false, false, 0, null);
+      node.dispatchEvent(evt);
     }
-}
+  }
 
-
-
-ac.saveAs = function() {
+  ac.saveAs = function () {
     //console.log('agile-npm Initiating....')
-    return false
-};
+    return false;
+  };
 
-if (Meteor.isCordova) {
-
+  if (Meteor.isCordova) {
     //console.log('agile-npm: Device Ready')
     //console.log(cordova.file);
-
-
     //If cordova switch to native file transfering and local storage
     //required: cordova file plugin and cordova openfile2 plugin
     ac.saveAs = function saveAs(url, file_name = null, opts = null, cb = null) {
-
-        try {
-            if (!resolveLocalFileSystemURL) {
-                console.error('Agile Downloader requires the cordova-plugin-file plugin for native download and storage.')
-                console.error('<a href="https://github.com/apache/cordova-plugin-file">https://github.com/apache/cordova-plugin-file</a>')
-                console.error('meteor add cordova:cordova-plugin-file@6.0.2')
-            }
-        } catch (err) {
-            console.error('resolveLocalFileSystemURL undefined')
-            console.error('Agile Downloader requires the cordova-plugin-file plugin for native download and storage.')
-            console.error('<a href="https://github.com/apache/cordova-plugin-file">https://github.com/apache/cordova-plugin-file</a>')
-            console.error('meteor add cordova:cordova-plugin-file@6.0.2')
+      try {
+        if (!resolveLocalFileSystemURL) {
+          console.error('Agile Downloader requires the cordova-plugin-file plugin for native download and storage.');
+          console.error('<a href="https://github.com/apache/cordova-plugin-file">https://github.com/apache/cordova-plugin-file</a>');
+          console.error('meteor add cordova:cordova-plugin-file@6.0.2');
         }
+      } catch (err) {
+        console.error('resolveLocalFileSystemURL undefined');
+        console.error('Agile Downloader requires the cordova-plugin-file plugin for native download and storage.');
+        console.error('<a href="https://github.com/apache/cordova-plugin-file">https://github.com/apache/cordova-plugin-file</a>');
+        console.error('meteor add cordova:cordova-plugin-file@6.0.2');
+      }
 
-        var self = this;
-        var storage_location = null
-        //if function is passed in the file_name or opts var, set callback to the passed function
-        if (Object.prototype.toString.call(file_name) == '[object Function]' || typeof file_name === "function") {
-            cb = file_name
+      var self = this;
+      var storage_location = null; //if function is passed in the file_name or opts var, set callback to the passed function
+
+      if (Object.prototype.toString.call(file_name) == '[object Function]' || typeof file_name === "function") {
+        cb = file_name;
+      }
+
+      if (Object.prototype.toString.call(opts) == '[object Function]' || typeof opts === "function") {
+        cb = opts;
+      }
+
+      if (!file_name || !Object.prototype.toString.call(file_name) == '[object Function]' || !typeof file_name === "function") {
+        file_name = url.split('/').pop();
+      }
+
+      if (!storage_location || Object.prototype.toString.call(storage_location) == '[object Function]' || typeof storage_location === "function") {
+        switch (device.platform) {
+          case "Android":
+            storage_location = cordova.file.externalDataDirectory;
+            break;
+
+          case "iOS":
+            storage_location = cordova.file.documentsDirectory;
+            break;
         }
+      }
 
-        if (Object.prototype.toString.call(opts) == '[object Function]' || typeof opts === "function") {
-            cb = opts
-        }
+      resolveLocalFileSystemURL(storage_location, function (fs) {
+        //console.log('file system open: ' + fs.name);
+        fs.getFile(file_name, {
+          create: true,
+          exclusive: false
+        }, function (fileEntry) {
+          //console.log('fileEntry is file? ' + fileEntry.isFile.toString());
+          var oReq = new XMLHttpRequest(); // Make sure you add the domain name to the Content-Security-Policy <meta> element.
 
-        if (!file_name || !Object.prototype.toString.call(file_name) == '[object Function]' || !typeof file_name === "function") {
-            file_name = url.split('/').pop()
-        }
+          oReq.open("GET", url, true); // Define how you want the XHR data to come back
 
-        if (!storage_location || Object.prototype.toString.call(storage_location) == '[object Function]' || typeof storage_location === "function") {
-            switch (device.platform) {
-                case "Android":
-                    storage_location = cordova.file.externalDataDirectory;
-                    break;
+          oReq.responseType = "blob";
+          oReq.addEventListener('readystatechange', function (e) {
+            if (oReq.readyState == 2 && oReq.status == 200) {//console.log('Download is being started')
+            } else if (oReq.readyState == 3) {//console.log('Download is in progress')
+            } else if (oReq.readyState == 4) {
+              //console.log('Downloading has finished')
+              self.DL_OBJECT = oReq.response; //console.log(oReq)
+              // Set href as a local object URL
 
-                case "iOS":
-                    storage_location = cordova.file.documentsDirectory;
-                    break;
-            }
-        }
+              self.DL_PATH = self.DL_OBJECT; // Set name of download
+              //document.querySelector('#save-file').setAttribute('download', 'img.jpeg');
 
+              self.DL_NAME = file_name;
+              var blob = oReq.response; // Note: not oReq.responseText
 
+              if (blob) {
+                fileEntry.createWriter(function (fileWriter) {
+                  fileWriter.write(blob);
+                  var mimeType = fileEntry.file.type; //console.log('mimetype: ' + mimeType)
 
+                  fileWriter.onwriteend = function () {
+                    var url = fileEntry.toURL();
 
-        resolveLocalFileSystemURL(
-            storage_location,
-            function(fs) {
-                //console.log('file system open: ' + fs.name);
-                fs.getFile(file_name, {
-                    create: true,
-                    exclusive: false
-                }, function(fileEntry) {
+                    if (!cordova.plugins.fileOpener2) {
+                      if (!resolveLocalFileSystemURL) {
+                        console.warn('Agile Downloader requires the cordova-plugin-file-opener2 plugin to automatically open files <a href="https://github.com/pwlin/cordova-plugin-file-opener2">https://github.com/pwlin/cordova-plugin-file-opener2</a>');
+                        console.error('meteor add cordova:cordova-plugin-file-opener2@3.0.0');
+                      }
+                    } else {
+                      cordova.plugins.fileOpener2.open(url, mimeType, {
+                        error: function error(err) {
+                          console.error(err); //alert("Unable to download");
 
-                    //console.log('fileEntry is file? ' + fileEntry.isFile.toString());
-                    var oReq = new XMLHttpRequest();
-                    // Make sure you add the domain name to the Content-Security-Policy <meta> element.
-                    oReq.open("GET", url, true);
-                    // Define how you want the XHR data to come back
-                    oReq.responseType = "blob";
-
-                    oReq.addEventListener('readystatechange', function(e) {
-                        if (oReq.readyState == 2 && oReq.status == 200) {
-                            //console.log('Download is being started')
-                        } else if (oReq.readyState == 3) {
-                            //console.log('Download is in progress')
-                        } else if (oReq.readyState == 4) {
-                            //console.log('Downloading has finished')
-
-                            self.DL_OBJECT = oReq.response;
-
-
-                            //console.log(oReq)
-
-                            // Set href as a local object URL
-                            self.DL_PATH = self.DL_OBJECT;
-
-                            // Set name of download
-                            //document.querySelector('#save-file').setAttribute('download', 'img.jpeg');
-                            self.DL_NAME = file_name
-
-                            var blob = oReq.response; // Note: not oReq.responseText
-                            if (blob) {
-                                fileEntry.createWriter(
-                                    function(fileWriter) {
-                                        fileWriter.write(blob);
-
-                                        var mimeType = fileEntry.file.type
-                                        //console.log('mimetype: ' + mimeType)
-                                        fileWriter.onwriteend = function() {
-                                            var url = fileEntry.toURL();
-
-
-
-                                            if (!cordova.plugins.fileOpener2) {
-                                                if (!resolveLocalFileSystemURL) {
-                                                    console.warn('Agile Downloader requires the cordova-plugin-file-opener2 plugin to automatically open files <a href="https://github.com/pwlin/cordova-plugin-file-opener2">https://github.com/pwlin/cordova-plugin-file-opener2</a>')
-                                                    console.error('meteor add cordova:cordova-plugin-file-opener2@3.0.0')
-                                                }
-                                            } else {
-                                                cordova.plugins.fileOpener2.open(url, mimeType, {
-                                                    error: function error(err) {
-                                                        console.error(err);
-                                                        //alert("Unable to download");
-                                                        cb({
-                                                            file: fileEntry,
-                                                            progress: 100,
-                                                            file_name: file_name,
-                                                            url: url,
-                                                            storage_location: storage_location
-                                                        })
-                                                    },
-                                                    success: function success() {
-                                                        //console.log("success with opening the file");
-                                                        try {
-                                                            cb({
-                                                                file: fileEntry,
-                                                                progress: 100,
-                                                                file_name: file_name,
-                                                                url: url,
-                                                                storage_location: storage_location
-                                                            })
-                                                        } catch (err) {
-                                                            console.error(err)
-                                                        }
-                                                    }
-
-                                                });
-                                            }
-                                        };
-
-                                        fileWriter.onerror = function(err) {
-                                            alert("Unable to download");
-                                            console.error(err);
-                                        };
-                                    }
-                                )
-
-                                /*writeFile(reader.result, null);
-                                 // Or read the data with a FileReader
-                                 var reader = new FileReader();
-                                 reader.addEventListener("loadend", function(e) {
-                                    // reader.result contains the contents of blob as text
-                                    //console.log('File Downloaded')
-                                    //console.log(reader)
-                                 });
-                                
-                                 //console.log(reader.readAsText(blob));
-                                 */
-                            } else console.error('we didnt get an XHR response!');
-
-                            // Recommended : Revoke the object URL after some time to free up resources
-                            // There is no way to find out whether user finished downloading
-                            setTimeout(function() {
-                                window.URL.revokeObjectURL(self.DL_OBJECT);
-                            }, 60 * 1000);
-                        }
-                    });
-
-                    oReq.addEventListener('progress', function(e) {
-                        if (cb) {
+                          cb({
+                            file: fileEntry,
+                            progress: 100,
+                            file_name: file_name,
+                            url: url,
+                            storage_location: storage_location
+                          });
+                        },
+                        success: function success() {
+                          //console.log("success with opening the file");
+                          try {
                             cb({
-                                progress: (e.loaded / e.total) * 100,
-                                file_name: file_name,
-                                url: url,
-                                storage_location: storage_location
-                            })
+                              file: fileEntry,
+                              progress: 100,
+                              file_name: file_name,
+                              url: url,
+                              storage_location: storage_location
+                            });
+                          } catch (err) {
+                            console.error(err);
+                          }
                         }
-                    });
+                      });
+                    }
+                  };
 
-
-                    oReq.send(null);
-                }, function(err) {
-                    console.error('error getting file! ' + err);
+                  fileWriter.onerror = function (err) {
+                    alert("Unable to download");
+                    console.error(err);
+                  };
                 });
-            },
-            function(err) {
-                console.error('error getting persistent fs! ' + err);
-            });
-    }
+                /*writeFile(reader.result, null);
+                 // Or read the data with a FileReader
+                 var reader = new FileReader();
+                 reader.addEventListener("loadend", function(e) {
+                    // reader.result contains the contents of blob as text
+                    //console.log('File Downloaded')
+                    //console.log(reader)
+                 });
+                
+                 //console.log(reader.readAsText(blob));
+                 */
+              } else console.error('we didnt get an XHR response!'); // Recommended : Revoke the object URL after some time to free up resources
+              // There is no way to find out whether user finished downloading
 
 
-
-
-} else {
-
-    ac.saveAs = _global.saveAs || (
-        // probably in some web worker
-        (typeof window !== 'object' || window !== _global) ?
-        function saveAs() {
-            /* noop */ }
-
-        // Use download attribute first if possible (#193 Lumia mobile)
-        :
-        'download' in HTMLAnchorElement.prototype ?
-        function saveAs(blob, file_name = null, opts = null, cb = null) {
-            //if function is passed in the file_name or opts var, set callback to the passed function
-            if (Object.prototype.toString.call(opts) == '[object Function]' || typeof opts === "function") {
-                cb = opts
+              setTimeout(function () {
+                window.URL.revokeObjectURL(self.DL_OBJECT);
+              }, 60 * 1000);
             }
-            if (Object.prototype.toString.call(file_name) == '[object Function]' || typeof file_name === "function") {
-                cb = file_name
+          });
+          oReq.addEventListener('progress', function (e) {
+            if (cb) {
+              cb({
+                progress: e.loaded / e.total * 100,
+                file_name: file_name,
+                url: url,
+                storage_location: storage_location
+              });
             }
+          });
+          oReq.send(null);
+        }, function (err) {
+          console.error('error getting file! ' + err);
+        });
+      }, function (err) {
+        console.error('error getting persistent fs! ' + err);
+      });
+    };
+  } else {
+    ac.saveAs = _global.saveAs || ( // probably in some web worker
+    typeof window !== 'object' || window !== _global ? function saveAs() {}
+    /* noop */
+    // Use download attribute first if possible (#193 Lumia mobile)
+    : 'download' in HTMLAnchorElement.prototype ? function saveAs(blob, file_name = null, opts = null, cb = null) {
+      //if function is passed in the file_name or opts var, set callback to the passed function
+      if (Object.prototype.toString.call(opts) == '[object Function]' || typeof opts === "function") {
+        cb = opts;
+      }
 
+      if (Object.prototype.toString.call(file_name) == '[object Function]' || typeof file_name === "function") {
+        cb = file_name;
+      }
 
+      var URL = _global.URL || _global.webkitURL;
+      var a = document.createElement('a');
+      file_name = file_name || blob.name;
 
-            var URL = _global.URL || _global.webkitURL
-            var a = document.createElement('a')
-            file_name = file_name || blob.name
-            if (!file_name || !Object.prototype.toString.call(file_name) == '[object Function]' || !typeof file_name === "function") {
-                try {
-                    file_name = blob.split('/').pop()
-                } catch (err) {
-                    console.error(err)
-                    file_name = 'download'
-                }
-            }
-
-            a.download = file_name
-            a.rel = 'noopener' // tabnabbing
-
-            // TODO: detect chrome extensions & packaged apps
-            // a.target = '_blank'
-
-            if (typeof blob === 'string') {
-                // Support regular links
-                a.href = blob
-                if (a.origin !== location.origin) {
-                    corsEnabled(a.href) ?
-                        download(blob, file_name, opts) :
-                        click(a, a.target = '_blank')
-                } else {
-                    click(a)
-                }
-            } else {
-                // Support blobs
-                a.href = URL.createObjectURL(blob)
-                setTimeout(function() {
-                    URL.revokeObjectURL(a.href)
-                }, 4E4) // 40s
-                setTimeout(function() {
-                    click(a)
-                }, 0)
-            }
+      if (!file_name || !Object.prototype.toString.call(file_name) == '[object Function]' || !typeof file_name === "function") {
+        try {
+          file_name = blob.split('/').pop();
+        } catch (err) {
+          console.error(err);
+          file_name = 'download';
         }
+      }
 
-        // Use msSaveOrOpenBlob as a second approach
-        :
-        'msSaveOrOpenBlob' in navigator ?
-        function saveAs(blob, file_name = null, opts = null, cb = null) {
+      a.download = file_name;
+      a.rel = 'noopener'; // tabnabbing
+      // TODO: detect chrome extensions & packaged apps
+      // a.target = '_blank'
 
-            //if function is passed in the file_name or opts var, set callback to the passed function
-            if (Object.prototype.toString.call(opts) == '[object Function]' || typeof opts === "function") {
-                cb = opts
-            }
-            if (Object.prototype.toString.call(file_name) == '[object Function]' || typeof file_name === "function") {
-                cb = file_name
-            }
+      if (typeof blob === 'string') {
+        // Support regular links
+        a.href = blob;
 
-            file_name = file_name || blob.name
-            if (!file_name || !Object.prototype.toString.call(file_name) == '[object Function]' || !typeof file_name === "function") {
-                try {
-                    file_name = blob.split('/').pop()
-                } catch (err) {
-                    console.error(err)
-                    file_name = 'download'
-                }
-            }
-
-            if (typeof blob === 'string') {
-                if (corsEnabled(blob)) {
-                    download(blob, file_name, opts)
-                } else {
-                    var a = document.createElement('a')
-                    a.href = blob
-                    a.target = '_blank'
-                    setTimeout(function() {
-                        click(a)
-                    })
-                }
-            } else {
-                navigator.msSaveOrOpenBlob(bom(blob, opts), file_name)
-            }
+        if (a.origin !== location.origin) {
+          corsEnabled(a.href) ? download(blob, file_name, opts) : click(a, a.target = '_blank');
+        } else {
+          click(a);
         }
+      } else {
+        // Support blobs
+        a.href = URL.createObjectURL(blob);
+        setTimeout(function () {
+          URL.revokeObjectURL(a.href);
+        }, 4E4); // 40s
 
-        // Fallback to using FileReader and a popup
-        :
-        function saveAs(blob, file_name, opts, popup) {
-            // Open a popup immediately do go around popup blocker
-            // Mostly only available on user interaction and the fileReader is async so...
-            popup = popup || open('', '_blank')
-            if (popup) {
-                popup.document.title =
-                    popup.document.body.innerText = 'downloading...'
-            }
+        setTimeout(function () {
+          click(a);
+        }, 0);
+      }
+    } // Use msSaveOrOpenBlob as a second approach
+    : 'msSaveOrOpenBlob' in navigator ? function saveAs(blob, file_name = null, opts = null, cb = null) {
+      //if function is passed in the file_name or opts var, set callback to the passed function
+      if (Object.prototype.toString.call(opts) == '[object Function]' || typeof opts === "function") {
+        cb = opts;
+      }
 
-            //if function is passed in the file_name or opts var, set callback to the passed function
-            if (Object.prototype.toString.call(opts) == '[object Function]' || typeof opts === "function") {
-                cb = opts
-            }
-            if (Object.prototype.toString.call(file_name) == '[object Function]' || typeof file_name === "function") {
-                cb = file_name
-            }
+      if (Object.prototype.toString.call(file_name) == '[object Function]' || typeof file_name === "function") {
+        cb = file_name;
+      }
 
-            file_name = file_name || blob.name
-            if (!file_name || !Object.prototype.toString.call(file_name) == '[object Function]' || !typeof file_name === "function") {
-                try {
-                    file_name = blob.split('/').pop()
-                } catch (err) {
-                    console.error(err)
-                    file_name = 'download'
-                }
-            }
+      file_name = file_name || blob.name;
 
-            if (typeof blob === 'string') return download(blob, file_name, opts)
-
-            var force = blob.type === 'application/octet-stream'
-            var isSafari = /constructor/i.test(_global.HTMLElement) || _global.safari
-            var isChromeIOS = /CriOS\/[\d]+/.test(navigator.userAgent)
-
-            if ((isChromeIOS || (force && isSafari)) && typeof FileReader === 'object') {
-                // Safari doesn't allow downloading of blob URLs
-                var reader = new FileReader()
-                reader.onloadend = function() {
-                    var url = reader.result
-                    url = isChromeIOS ? url : url.replace(/^data:[^;]*;/, 'data:attachment/file;')
-                    if (popup) popup.location.href = url
-                    else location = url
-                    popup = null // reverse-tabnabbing #460
-                }
-                reader.readAsDataURL(blob)
-            } else {
-                var URL = _global.URL || _global.webkitURL
-                var url = URL.createObjectURL(blob)
-                if (popup) popup.location = url
-                else location.href = url
-                popup = null // reverse-tabnabbing #460
-                setTimeout(function() {
-                    URL.revokeObjectURL(url)
-                }, 4E4) // 40s
-            }
+      if (!file_name || !Object.prototype.toString.call(file_name) == '[object Function]' || !typeof file_name === "function") {
+        try {
+          file_name = blob.split('/').pop();
+        } catch (err) {
+          console.error(err);
+          file_name = 'download';
         }
-    )
-}
+      }
 
-//--------------------- END DOWNLOAD SAVAS ---------------------
+      if (typeof blob === 'string') {
+        if (corsEnabled(blob)) {
+          download(blob, file_name, opts);
+        } else {
+          var a = document.createElement('a');
+          a.href = blob;
+          a.target = '_blank';
+          setTimeout(function () {
+            click(a);
+          });
+        }
+      } else {
+        navigator.msSaveOrOpenBlob(bom(blob, opts), file_name);
+      }
+    } // Fallback to using FileReader and a popup
+    : function saveAs(blob, file_name, opts, popup) {
+      // Open a popup immediately do go around popup blocker
+      // Mostly only available on user interaction and the fileReader is async so...
+      popup = popup || open('', '_blank');
+
+      if (popup) {
+        popup.document.title = popup.document.body.innerText = 'downloading...';
+      } //if function is passed in the file_name or opts var, set callback to the passed function
 
 
-/* Global Data
-This is a storage of standard data that may be needed in various apps
-*/
+      if (Object.prototype.toString.call(opts) == '[object Function]' || typeof opts === "function") {
+        cb = opts;
+      }
 
-ac.states = [
-   {
+      if (Object.prototype.toString.call(file_name) == '[object Function]' || typeof file_name === "function") {
+        cb = file_name;
+      }
+
+      file_name = file_name || blob.name;
+
+      if (!file_name || !Object.prototype.toString.call(file_name) == '[object Function]' || !typeof file_name === "function") {
+        try {
+          file_name = blob.split('/').pop();
+        } catch (err) {
+          console.error(err);
+          file_name = 'download';
+        }
+      }
+
+      if (typeof blob === 'string') return download(blob, file_name, opts);
+      var force = blob.type === 'application/octet-stream';
+
+      var isSafari = /constructor/i.test(_global.HTMLElement) || _global.safari;
+
+      var isChromeIOS = /CriOS\/[\d]+/.test(navigator.userAgent);
+
+      if ((isChromeIOS || force && isSafari) && typeof FileReader === 'object') {
+        // Safari doesn't allow downloading of blob URLs
+        var reader = new FileReader();
+
+        reader.onloadend = function () {
+          var url = reader.result;
+          url = isChromeIOS ? url : url.replace(/^data:[^;]*;/, 'data:attachment/file;');
+          if (popup) popup.location.href = url;else location = url;
+          popup = null; // reverse-tabnabbing #460
+        };
+
+        reader.readAsDataURL(blob);
+      } else {
+        var URL = _global.URL || _global.webkitURL;
+        var url = URL.createObjectURL(blob);
+        if (popup) popup.location = url;else location.href = url;
+        popup = null; // reverse-tabnabbing #460
+
+        setTimeout(function () {
+          URL.revokeObjectURL(url);
+        }, 4E4); // 40s
+      }
+    });
+  } //--------------------- END DOWNLOAD SAVAS ---------------------
+
+  /* Global Data
+  This is a storage of standard data that may be needed in various apps
+  */
+
+
+  ac.states = [{
     abreviation: "AL",
     full: "Alabama"
-}, {
+  }, {
     abreviation: "AK",
     full: "Alaska"
-}, {
+  }, {
     abreviation: "AS",
     full: "American Samoa"
-}, {
+  }, {
     abreviation: "AZ",
     full: "Arizona"
-}, {
+  }, {
     abreviation: "AR",
     full: "Arkansas"
-}, {
+  }, {
     abreviation: "CA",
     full: "California"
-}, {
+  }, {
     abreviation: "CO",
     full: "Colorado"
-}, {
+  }, {
     abreviation: "CT",
     full: "Connecticut"
-}, {
+  }, {
     abreviation: "DE",
     full: "Delaware"
-}, {
+  }, {
     abreviation: "DC",
     full: "District Of Columbia"
-}, {
+  }, {
     abreviation: "FM",
     full: "Federated States Of Micronesia"
-}, {
+  }, {
     abreviation: "FL",
     full: "Florida"
-}, {
+  }, {
     abreviation: "GA",
     full: "Georgia"
-}, {
+  }, {
     abreviation: "GU",
     full: "Guam"
-}, {
+  }, {
     abreviation: "HI",
     full: "Hawaii"
-}, {
+  }, {
     abreviation: "ID",
     full: "Idaho"
-}, {
+  }, {
     abreviation: "IL",
     full: "Illinois"
-}, {
+  }, {
     abreviation: "IN",
     full: "Indiana"
-}, {
+  }, {
     abreviation: "IA",
     full: "Iowa"
-}, {
+  }, {
     abreviation: "KS",
     full: "Kansas"
-}, {
+  }, {
     abreviation: "KY",
     full: "Kentucky"
-}, {
+  }, {
     abreviation: "LA",
     full: "Louisiana"
-}, {
+  }, {
     abreviation: "ME",
     full: "Maine"
-}, {
+  }, {
     abreviation: "MH",
     full: "Marshall Islands"
-}, {
+  }, {
     abreviation: "MD",
     full: "Maryland"
-}, {
+  }, {
     abreviation: "MA",
     full: "Massachusetts"
-}, {
+  }, {
     abreviation: "MI",
     full: "Michigan"
-}, {
+  }, {
     abreviation: "MN",
     full: "Minnesota"
-}, {
+  }, {
     abreviation: "MS",
     full: "Mississippi"
-}, {
+  }, {
     abreviation: "MO",
     full: "Missouri"
-}, {
+  }, {
     abreviation: "MT",
     full: "Montana"
-}, {
+  }, {
     abreviation: "NE",
     full: "Nebraska"
-}, {
+  }, {
     abreviation: "NV",
     full: "Nevada"
-}, {
+  }, {
     abreviation: "NH",
     full: "New Hampshire"
-}, {
+  }, {
     abreviation: "NJ",
     full: "New Jersey"
-}, {
+  }, {
     abreviation: "NM",
     full: "New Mexico"
-}, {
+  }, {
     abreviation: "NY",
     full: "New York"
-}, {
+  }, {
     abreviation: "NC",
     full: "North Carolina"
-}, {
+  }, {
     abreviation: "ND",
     full: "North Dakota"
-}, {
+  }, {
     abreviation: "MP",
     full: "Northern Mariana Islands"
-}, {
+  }, {
     abreviation: "OH",
     full: "Ohio"
-}, {
+  }, {
     abreviation: "OK",
     full: "Oklahoma"
-}, {
+  }, {
     abreviation: "OR",
     full: "Oregon"
-}, {
+  }, {
     abreviation: "PW",
     full: "Palau"
-}, {
+  }, {
     abreviation: "PA",
     full: "Pennsylvania"
-}, {
+  }, {
     abreviation: "PR",
     full: "Puerto Rico"
-}, {
+  }, {
     abreviation: "RI",
     full: "Rhode Island"
-}, {
+  }, {
     abreviation: "SC",
     full: "South Carolina"
-}, {
+  }, {
     abreviation: "SD",
     full: "South Dakota"
-}, {
+  }, {
     abreviation: "TN",
     full: "Tennessee"
-}, {
+  }, {
     abreviation: "TX",
     full: "Texas"
-}, {
+  }, {
     abreviation: "UT",
     full: "Utah"
-}, {
+  }, {
     abreviation: "VT",
     full: "Vermont"
-}, {
+  }, {
     abreviation: "VI",
     full: "Virgin Islands"
-}, {
+  }, {
     abreviation: "VA",
     full: "Virginia"
-}, {
+  }, {
     abreviation: "WA",
     full: "Washington"
-}, {
+  }, {
     abreviation: "WV",
     full: "West Virginia"
-}, {
+  }, {
     abreviation: "WI",
     full: "Wisconsin"
-}, {
+  }, {
     abreviation: "WY",
     full: "Wyoming"
-}
-]
-
-ac.mime_types = {
+  }];
+  ac.mime_types = {
     "323": "text/h323",
     "3g2": "video/3gpp2",
     "3gp": "video/3gpp",
@@ -1513,10 +1470,10 @@ ac.mime_types = {
     "xwd": "image/x-xwindowdump",
     "z": "application/x-compress",
     "zip": "application/x-zip-compressed"
-}
+  };
+  _global.ac = ac;
 
-_global.ac = ac
-
-if (typeof module !== 'undefined') {
+  if (typeof module !== 'undefined') {
     module.exports = ac;
-}
+  }
+});
