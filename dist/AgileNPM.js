@@ -1018,6 +1018,7 @@
     "dot": "application/msword",
     "dotm": "application/vnd.ms-word.template.macroEnabled.12",
     "dotx": "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
+    "drawio": "text/xml",
     "dsp": "application/octet-stream",
     "dsw": "text/plain",
     "dtd": "text/xml",
