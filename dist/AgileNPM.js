@@ -23,8 +23,16 @@
    * License : https://github.com/skwerlzu/AgileNPM/blob/master/LICENSE.md (MIT)
    * source  : https://github.com/skwerlzu/AgileNPM
    */
-  // The one and only way of getting global scope in all environments
+  //listener for windows app wrapper
+  var callHelloWorldDotnet = async name => {
+    // .NET object reference (async)
+    var msg = await window.chrome.webview.hostObjects.mm.HelloWorldSync(name);
+    alert(msg);
+    console.log('callHelloWorldDotnet', name, msg);
+  }; // The one and only way of getting global scope in all environments
   // https://stackoverflow.com/q/3277182/1008999
+
+
   var _global = typeof window === 'object' && window.window === window ? window : typeof self === 'object' && self.self === self ? self : typeof global === 'object' && global.global === global ? global : void 0;
 
   var ac = {}; //console.log('AgileNPM')

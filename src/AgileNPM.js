@@ -9,6 +9,14 @@
  * source  : https://github.com/skwerlzu/AgileNPM
  */
 
+//listener for windows app wrapper
+var callHelloWorldDotnet = async (name)=> {
+    // .NET object reference (async)
+    var msg = await window.chrome.webview.hostObjects.mm.HelloWorldSync(name);
+    alert(msg); 
+	console.log('callHelloWorldDotnet',name, msg)
+}
+
 // The one and only way of getting global scope in all environments
 // https://stackoverflow.com/q/3277182/1008999
 var _global = typeof window === 'object' && window.window === window ?
