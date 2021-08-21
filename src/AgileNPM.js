@@ -211,6 +211,19 @@ ac.upload = (file, path = '', settings = null, cb = null) => {
 		}
 	}
 
+	let local_settings = {
+			  settings,
+			  agile_npm: Meteor.settings.public.agile_npm,
+			  amazon_identity: Meteor.settings.public.amazon_identity,
+			  amazon_bucket: Meteor.settings.public.amazon_bucket,
+			  amazon_region: Meteor.settings.public.amazon_region 
+
+			}
+		  console.log('agile-npm: aws-settings',local_settings)
+	  if(!Meteor.settings.public && !Meteor.settings.public.amazon_identity){
+		  cb(local_settings)
+		  return local_settings
+	  }
 	
     //cb is called on http updates
     if (!file) {
