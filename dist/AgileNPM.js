@@ -217,8 +217,39 @@
       agile_npm: Meteor.settings.public.agile_npm,
       amazon_identity: Meteor.settings.public.amazon_identity,
       amazon_bucket: Meteor.settings.public.amazon_bucket,
-      amazon_region: Meteor.settings.public.amazon_region
+      amazon_region: Meteor.settings.public.amazon_region //Pull settings from DB to override defaults
+
     };
+    console.log('agile-npm: Attempting app settings retrieval');
+
+    try {
+      Meteor.call('settings.appSettingsPrivate', (err, res) => {
+        if (err) {
+          console.error({
+            status: 'error',
+            message: 'Failed to retrieve app settings',
+            error: err
+          });
+        } else {
+          local_settings.db_settings = true;
+
+          if (res.amazon_identity) {
+            local_settings.amazon_identity = res.amazon_identity;
+          }
+
+          if (res.amazon_bucket) {
+            local_settings.amazon_bucket = res.amazon_bucket;
+          }
+
+          if (res.amazon_region) {
+            local_settings.amazon_region = res.amazon_region;
+          }
+        }
+      });
+    } catch (err) {
+      console.error('Failed to retrieve db settings');
+    }
+
     console.log('agile-npm: aws-settings', local_settings);
 
     if (!Meteor.settings.public && !Meteor.settings.public.amazon_identity) {
