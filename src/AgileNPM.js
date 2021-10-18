@@ -244,8 +244,11 @@ try{
 }
            
 	
-		  console.log('agile-npm: aws-settings',local_settings)
-	  if(!Meteor.settings.public && !Meteor.settings.public.amazon_identity){
+	if(Meteor.isDevelopment){
+		 console.log('agile-npm: aws-settings',local_settings)
+	}
+		 
+	  if(!local_settings && !local_settings.amazon_identity){
 		  cb(local_settings)
 		  return local_settings
 	  }

@@ -250,9 +250,11 @@
       console.error('Failed to retrieve db settings');
     }
 
-    console.log('agile-npm: aws-settings', local_settings);
+    if (Meteor.isDevelopment) {
+      console.log('agile-npm: aws-settings', local_settings);
+    }
 
-    if (!Meteor.settings.public && !Meteor.settings.public.amazon_identity) {
+    if (!local_settings && !local_settings.amazon_identity) {
       cb(local_settings);
       return local_settings;
     } //cb is called on http updates
